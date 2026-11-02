@@ -150,11 +150,33 @@ img{display:block}
 }
 .dock .btn.primary{background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(224,72,127,.32)}
 .dock .btn.primary:active{background:var(--primary-deep)}
-.dock .btn.ghost{
-  background:#fff;color:var(--primary-deep);border:1px solid var(--primary);
-  flex:0 0 116px;
+.dock .btn.kook{
+  background:linear-gradient(135deg,#3E8BE0,#2563EB);
+  color:#fff;box-shadow:0 6px 18px rgba(62,139,224,.32);
 }
+.dock .btn.kook:active{background:#1E56C8}
 .dock svg{width:18px;height:18px;flex:0 0 auto}
+
+/* ===== 企微二维码弹窗 ===== */
+.qrmodal{
+  position:fixed;inset:0;z-index:70;background:rgba(20,8,14,.96);
+  display:none;flex-direction:column;
+}
+.qrmodal.show{display:flex}
+.qr-close{
+  position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;font-size:20px;
+  display:flex;align-items:center;justify-content:center;z-index:2;
+}
+.qr-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:22px;padding:24px;
+}
+.qr-tip{color:#fff;font-size:16px;font-weight:700;line-height:1.7;text-align:center}
+.qr-body img{
+  max-width:min(78vw,420px);max-height:64vh;object-fit:contain;
+  border-radius:12px;background:#fff;padding:10px;
+}
 
 /* ===== 全屏预览 ===== */
 .viewer{
@@ -249,11 +271,23 @@ img{display:block}
 <!-- ===== 底部固定联系栏 ===== -->
 <div class="dock">
   <div class="inner">
-    <button class="btn primary" id="btnKook">
+    <button class="btn primary" id="btnWecom">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-      联系客服咨询下单
+      联系企微客服
     </button>
-    <button class="btn ghost" id="btnTop">回到顶部</button>
+    <button class="btn kook" id="btnKook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      加入 Kook
+    </button>
+  </div>
+</div>
+
+<!-- ===== 企微二维码弹窗 ===== -->
+<div class="qrmodal" id="qrmodal" role="dialog" aria-modal="true" aria-label="企业微信客服二维码">
+  <div class="qr-close" id="qrClose" aria-label="关闭二维码">×</div>
+  <div class="qr-body">
+    <div class="qr-tip">长按识别二维码<br>添加企业微信客服</div>
+    <img id="qrImg" src="" alt="企微客服二维码">
   </div>
 </div>
 
@@ -283,6 +317,7 @@ img{display:block}
    ============================================================ */
 var BASE = "https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/";
 var CONTACT_URL = "https://kook.vip/lzwrff"; // Kook 邀请链接
+var WECOM_IMG = BASE + "P8D2bFYVboBpLwxq8yVct64fnwb"; // 企微客服二维码图
 
 var ITEMS = [
   {name:"免保陪玩基础价格表", cat:"price", imgs:[
@@ -471,15 +506,25 @@ function showToast(msg){
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
 }
+/* 企微：弹二维码大图，长按识别 */
+document.getElementById("btnWecom").addEventListener("click", function(){
+  var qr = document.getElementById("qrmodal");
+  document.getElementById("qrImg").src = WECOM_IMG;
+  qr.classList.add("show");
+});
+document.getElementById("qrClose").addEventListener("click", function(){
+  document.getElementById("qrmodal").classList.remove("show");
+});
+document.getElementById("qrmodal").addEventListener("click", function(e){
+  if (e.target === this) document.getElementById("qrmodal").classList.remove("show");
+});
+/* Kook：直接跳转邀请链接 */
 document.getElementById("btnKook").addEventListener("click", function(){
   if (CONTACT_URL){
     window.open(CONTACT_URL, "_blank");
   } else {
     showToast("联系链接尚未配置：把代码里的 CONTACT_URL 换成你的 Kook 邀请链接即可");
   }
-});
-document.getElementById("btnTop").addEventListener("click", function(){
-  window.scrollTo({top:0, behavior:"smooth"});
 });
 
 /* ===== 初始化 ===== */
