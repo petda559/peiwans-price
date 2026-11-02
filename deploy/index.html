@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>免保陪玩 · 价格表</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23E0487F'/%3E%3Ctext x='32' y='43' font-size='30' font-family='PingFang SC, Microsoft YaHei, sans-serif' font-weight='700' text-anchor='middle' fill='%23fff'%3E免%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#FFF5F7;
+  --card:#FFFFFF;
+  --ink:#3A2130;
+  --muted:#9B7A8B;
+  --line:#F4DFE6;
+  --primary:#E0487F;
+  --primary-deep:#C2336A;
+  --price:#E0487F;
+  --rule:#7C5CE8;
+  --fun:#E8952B;
+  --funrun:#3E8BE0;
+  --price-bg:#FDEBF2;
+  --rule-bg:#F0ECFE;
+  --fun-bg:#FEF3E3;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  padding-bottom:96px;
+  line-height:1.5;
+}
+button{font-family:inherit;border:none;background:none;cursor:pointer}
+img{display:block}
+
+/* ===== 顶部品牌区 ===== */
+.hero{
+  position:relative;
+  overflow:hidden;
+  padding:34px 20px 26px;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(224,72,127,.14), transparent 42%),
+    radial-gradient(circle at 6% 86%, rgba(124,92,232,.12), transparent 40%),
+    linear-gradient(180deg,#FFF0F5 0%,#FFF5F7 100%);
+}
+.hero .ring{
+  position:absolute;top:-46px;right:-40px;width:190px;height:190px;
+  border-radius:50%;border:1px solid rgba(224,72,127,.18);opacity:.9;
+}
+.hero .ring::before{
+  content:"";position:absolute;inset:22px;border-radius:50%;
+  border:1px dashed rgba(224,72,127,.22);
+}
+.hero .brand{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.hero .dot{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.hero .sub{font-size:13px;color:var(--muted);letter-spacing:.4px}
+.hero h1{font-size:32px;font-weight:800;letter-spacing:1px;margin:6px 0 4px;color:var(--ink)}
+.hero .en{font-size:12px;color:var(--muted);letter-spacing:2.5px;margin-bottom:16px}
+.hero .stats{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.hero .stat{
+  background:rgba(255,255,255,.85);border:1px solid var(--line);
+  border-radius:999px;padding:7px 13px;font-size:13px;color:#5E3A4C;
+  display:flex;align-items:center;gap:6px;
+}
+.hero .stat b{color:var(--primary-deep);font-weight:700}
+
+/* ===== 分类筛选 ===== */
+.tabs{
+  position:sticky;top:0;z-index:20;
+  background:rgba(255,245,247,.92);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  padding:10px 16px 12px;
+  border-bottom:1px solid rgba(244,223,230,.7);
+}
+.tabs .row{display:flex;flex-wrap:wrap;gap:8px 6px}
+.tab{
+  flex:1 1 auto;min-width:calc(33.333% - 8px);justify-content:center;padding:7px 10px;border-radius:999px;font-size:13px;
+  color:#6B4759;background:#fff;border:1px solid var(--line);
+  transition:background .15s,color .15s,transform .1s;
+  display:flex;align-items:center;gap:5px;
+  white-space:nowrap;
+}
+.tab .n{font-size:12px;opacity:.75}
+.tab:active{transform:scale(.97)}
+.tab.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+.tab.on .n{opacity:.85}
+
+/* ===== 卡片网格 ===== */
+.grid{
+  max-width:1080px;margin:0 auto;padding:18px 16px 6px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+}
+.card{
+  background:var(--card);border-radius:18px;overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow:0 4px 16px rgba(194,51,106,.06);
+  transition:transform .12s ease,box-shadow .12s ease;
+  cursor:pointer;position:relative;min-width:0;
+}
+.card:active{transform:scale(.98)}
+.card .cover-wrap{position:relative;aspect-ratio:9/16;overflow:hidden;background:#FCEBF1}
+.card img.cover{
+  width:100%;height:100%;object-fit:cover;object-position:center 12%;
+}
+.card .mask{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(58,33,48,0) 55%,rgba(58,33,48,.42) 100%);
+}
+.card .type-tag{
+  position:absolute;left:10px;top:10px;z-index:2;
+  font-size:12px;font-weight:600;color:#fff;padding:4px 10px;border-radius:999px;
+}
+.card .type-tag.t-price{background:var(--price)}
+.card .type-tag.t-rule{background:var(--rule)}
+.card .type-tag.t-fun{background:var(--fun)}
+.card .type-tag.t-funrun{background:var(--funrun)}
+.card .cnt{
+  position:absolute;right:10px;top:10px;z-index:2;
+  font-size:11px;color:#fff;background:rgba(58,33,48,.45);
+  padding:3px 8px;border-radius:999px;
+}
+.card .info{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:12px 12px 11px;color:#fff}
+.card .name{font-size:15px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .hint{font-size:11px;margin-top:3px;opacity:.9}
+
+/* 最后一行孤卡：横跨整行但居中保持单卡宽度 */
+.card:last-child:nth-child(odd){
+  grid-column:1 / -1;
+  justify-self:center;
+  width:min(100%, calc(50% - 7px));
+}
+
+/* ===== 空态 ===== */
+.empty{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+
+/* ===== 底部固定联系栏 ===== */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+}
+.dock .inner{max-width:1080px;margin:0 auto;display:flex;gap:10px}
+.dock .btn{
+  flex:1;padding:13px 0;border-radius:14px;font-size:16px;font-weight:700;
+  text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.dock .btn.primary{background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(224,72,127,.32)}
+.dock .btn.primary:active{background:var(--primary-deep)}
+.dock .btn.ghost{
+  background:#fff;color:var(--primary-deep);border:1px solid var(--primary);
+  flex:0 0 116px;
+}
+.dock svg{width:18px;height:18px;flex:0 0 auto}
+
+/* ===== 全屏预览 ===== */
+.viewer{
+  position:fixed;inset:0;z-index:50;background:rgba(20,8,14,.96);
+  display:none;flex-direction:column;
+}
+.viewer.show{display:flex}
+.viewer .v-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 14px 6px;color:#fff;font-size:13px;
+}
+.viewer .v-close{
+  width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);
+  color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;
+}
+.viewer .v-stage{flex:1;position:relative;overflow:hidden;touch-action:pan-y}
+.viewer .v-slide{position:absolute;inset:0;display:flex;transition:transform .28s ease}
+.viewer .v-item{flex:0 0 100%;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.viewer img.v-img{
+  max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;
+  transition:transform .18s ease;transform-origin:center;
+}
+.viewer .v-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 16px calc(14px + env(safe-area-inset-bottom));
+}
+.viewer .v-arrow{
+  width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);
+  color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;
+}
+.viewer .v-page{color:#fff;font-size:13px;min-width:70px;text-align:center}
+.viewer .v-zoom{font-size:12px;color:rgba(255,255,255,.65);text-align:center;padding-bottom:6px}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:118px;transform:translateX(-50%) translateY(10px);
+  background:rgba(30,12,20,.92);color:#fff;font-size:14px;padding:11px 18px;
+  border-radius:12px;z-index:60;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;max-width:82vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.footnote{
+  max-width:1080px;margin:0 auto;padding:18px 20px 8px;text-align:center;
+  font-size:12px;color:var(--muted);line-height:1.7;
+}
+
+/* ===== 桌面扩展 ===== */
+@media (min-width:720px){
+  .tabs .row{flex-wrap:nowrap;gap:8px}
+  .tab{flex:1;min-width:0;padding:8px 6px;font-size:14px}
+  .grid{grid-template-columns:repeat(3,1fr);padding:26px 32px 10px;gap:22px}
+  .hero{padding:56px 48px 40px}
+  .hero h1{font-size:44px}
+  .card .name{font-size:17px}
+  .card:last-child:nth-child(odd){width:min(100%, calc(33.33% - 15px))}
+  .dock{padding:16px 32px calc(16px + env(safe-area-inset-bottom))}
+}
+@media (min-width:1000px){
+  .grid{grid-template-columns:repeat(4,1fr)}
+  .card:last-child:nth-child(odd){width:min(100%, calc(25% - 17px))}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部品牌区 ===== -->
+<header class="hero">
+  <div class="ring" aria-hidden="true"></div>
+  <div class="brand"><span class="dot"></span><span class="sub">DELTA FORCE 三角洲行动 · 陪玩服务</span></div>
+  <h1>免保陪玩</h1>
+  <div class="en">MIANBAO PEIWAN</div>
+  <div class="stats">
+    <span class="stat"><b>3</b> 张价格表</span>
+    <span class="stat"><b>1</b> 份权益规则</span>
+    <span class="stat"><b>25</b> 张趣味单</span>
+    <span class="stat"><b>4</b> 张跑刀趣味单</span>
+  </div>
+</header>
+
+<!-- ===== 分类筛选 ===== -->
+<nav class="tabs" aria-label="分类筛选">
+  <div class="row" id="tabRow"></div>
+</nav>
+
+<!-- ===== 卡片网格 ===== -->
+<main class="grid" id="grid"></main>
+<div class="empty" id="empty">该分类下暂时没有海报</div>
+
+<div class="footnote">所有价格与规则以最新海报为准，本页内容随时更新<br>下单前请先联系客服确认当前可用套餐</div>
+
+<!-- ===== 底部固定联系栏 ===== -->
+<div class="dock">
+  <div class="inner">
+    <button class="btn primary" id="btnKook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      联系客服咨询下单
+    </button>
+    <button class="btn ghost" id="btnTop">回到顶部</button>
+  </div>
+</div>
+
+<!-- ===== 全屏预览 ===== -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="海报大图预览">
+  <div class="v-top">
+    <span id="vTitle">海报</span>
+    <button class="v-close" id="vClose" aria-label="关闭预览">×</button>
+  </div>
+  <div class="v-stage" id="vStage">
+    <div class="v-slide" id="vSlide"></div>
+  </div>
+  <div class="v-zoom" id="vZoom">点击图片可放大 / 左右滑动切换</div>
+  <div class="v-nav">
+    <button class="v-arrow" id="vPrev" aria-label="上一张">‹</button>
+    <span class="v-page" id="vPage">1 / 1</span>
+    <button class="v-arrow" id="vNext" aria-label="下一张">›</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   数据：海报名称 / 分类(price|rule|fun) / 图片(永久链接)
+   发布前把 CONTACT_URL 换成你的 Kook 邀请链接即可
+   ============================================================ */
+var BASE = "https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/";
+var CONTACT_URL = "https://kook.vip/lzwrff"; // Kook 邀请链接
+
+var ITEMS = [
+  {name:"免保陪玩基础价格表", cat:"price", imgs:[
+    BASE+"YPr1b4SFSoU2EFx5QdGcLZEtnfc",
+    BASE+"XDBobIFQJowN52xm5WJcnVOlnC1"
+  ]},
+  {name:"大额保底", cat:"price", imgs:[BASE+"Pszfbj1sRo9nEFxhKTYcAfuanFm"]},
+  {name:"免保陪玩板板权益", cat:"rule", imgs:[
+    BASE+"L9uKbPaOho32flxbUXlcj5QXnOG",
+    BASE+"PzRjbtK1LoI0eaxlBuWcawZanMf"
+  ]},
+  {name:"免保陪玩3×3保险代做", cat:"price", imgs:[BASE+"VG3tbulwAoB9FNxh4JncBht4n1d"]},
+  {name:"小小巨人", cat:"fun", imgs:[BASE+"TYhSbnUP3oXtznxmVIDc3Fb2nwe"]},
+  {name:"七宗罪", cat:"fun", imgs:[BASE+"LvMBbINFCor0jpxXFyjcoJ4Cn8e"]},
+  {name:"百人斩", cat:"fun", imgs:[BASE+"XzdSbrTRxozlaBx6DzycJHhvnvh"]},
+  {name:"亿万富翁1.0", cat:"fun", imgs:[BASE+"Q23abTc9voeHtIxAnFEcwZownSd"]},
+  {name:"亿万富翁2.0", cat:"fun", imgs:[BASE+"RfS3b5beFo9T2ox7imFc3OyEn7g"]},
+  {name:"驰骋监狱 / 越狱大师", cat:"fun", imgs:[BASE+"S4RpbZkBuo3gGCx6fg0ci6mtnzc"]},
+  {name:"传奇摸贝王 / 捕鱼达人 / 珍珠蚌壳", cat:"fun", imgs:[BASE+"PWTkbUPkHo696cxUH9ScTAmlnee"]},
+  {name:"反派日常 / 八角笼斗士", cat:"fun", imgs:[BASE+"DV8SbWyL4oLMXHxofFEcDmX7n1b"]},
+  {name:"Copy Ninja", cat:"fun", imgs:[BASE+"QLoCbVnoBotPFUxxr2JcjFuhn6e"]},
+  {name:"典狱长大人", cat:"fun", imgs:[BASE+"IqkbbhgO8oOMJNxAv2VccnVunxY"]},
+  {name:"监狱的环游日记", cat:"fun", imgs:[BASE+"OmE9b8GPmoTIRhxIruVc4d8wnAb"]},
+  {name:"猎鸦人行动", cat:"fun", imgs:[BASE+"AMsmbm8C8ogKgkxOXwoct6p2nTd"]},
+  {name:"撬开典狱长的保险柜", cat:"fun", imgs:[BASE+"GN3EbNU8ioaZoBxGTylcIqNnnIq"]},
+  {name:"我来监狱只为摸泪", cat:"fun", imgs:[BASE+"Q3NwbLqt6ofrLjxwAOVc8AefnJd"]},
+  {name:"越狱计划", cat:"fun", imgs:[BASE+"COy1bToCAoVU3hxErRdcXoEXnJc"]},
+  {name:"熬鹰单", cat:"fun", imgs:[BASE+"Nu6ibL4CuoAFtSx3V7icu1fhnoc"]},
+  {name:"渡鸦王子", cat:"fun", imgs:[BASE+"OuZAbzHqSo4DDhxaLcdcBhiVnMt"]},
+  {name:"监狱反转环太平洋", cat:"fun", imgs:[BASE+"J6kMbd5bZoZsIYxn2FqcAnjknnb"]},
+  {name:"监狱环太平洋", cat:"fun", imgs:[BASE+"UYfkbwBesoHIrfxsS6vcWtcGn1b"]},
+  {name:"监狱风云之金金金", cat:"fun", imgs:[BASE+"V1LHb7VVxoyGItx5vFHcSnv3nIh"]},
+  {name:"女巫毒药 / 九九归一", cat:"fun", imgs:[BASE+"Ag2WbmCdnoKCobx5YHSckwtUn9f"]},
+  {name:"谁是监狱之王", cat:"fun", imgs:[BASE+"OTOzbzhCyopI5IxpwgTcz5pAnRb"]},
+  {name:"我真的不想出红了", cat:"fun", imgs:[BASE+"ZnpxbxCVeoffsZxdA2kcwjUQnUh"]},
+  {name:"质检！质检！", cat:"fun", imgs:[BASE+"Bx19bC9ZIoAPhOxYEy1czBwbnzU"]},
+  {name:"课程表", cat:"fun", imgs:[BASE+"N03sbqzTxonqCvxz6jscyj1snjf"]},
+  {name:"跑刀小小巨人", cat:"funrun", imgs:[BASE+"GyoObd8SGo7t2KxV0kzcRjiBnub"]},
+  {name:"摸贝小小巨人", cat:"funrun", imgs:[BASE+"W4yfb6xgwoX60Hx7eu9czT3Qnfe"]},
+  {name:"我嘞个只吃金红", cat:"funrun", imgs:[BASE+"MPYVbkUSmog4cZxPi84cltGxnmh"]},
+  {name:"GalaGame恋爱攻略单", cat:"funrun", imgs:[BASE+"IvWUbr3hRo4ML6xNE5Xc7LiZnNd"]}
+];
+
+var CATS = [
+  {key:"all", label:"全部"},
+  {key:"price", label:"陪玩价格表"},
+  {key:"rule", label:"权益规则"},
+  {key:"fun", label:"趣味单"},
+  {key:"funrun", label:"跑刀趣味单"}
+];
+var CAT_NAME = {price:"陪玩价格表", rule:"权益规则", fun:"趣味单", funrun:"跑刀趣味单"};
+var TAG_CLASS = {price:"t-price", rule:"t-rule", fun:"t-fun", funrun:"t-funrun"};
+
+var curCat = "all";
+
+/* ===== 渲染筛选标签 ===== */
+function renderTabs(){
+  var row = document.getElementById("tabRow");
+  row.innerHTML = "";
+  CATS.forEach(function(c){
+    var count = c.key === "all" ? ITEMS.length : ITEMS.filter(function(it){return it.cat === c.key;}).length;
+    var b = document.createElement("button");
+    b.className = "tab" + (c.key === curCat ? " on" : "");
+    b.setAttribute("data-cat", c.key);
+    b.innerHTML = '<span>'+c.label+'</span><span class="n">'+count+'</span>';
+    b.addEventListener("click", function(){ setCat(c.key); });
+    row.appendChild(b);
+  });
+}
+
+/* ===== 渲染卡片 ===== */
+function renderGrid(){
+  var grid = document.getElementById("grid");
+  var empty = document.getElementById("empty");
+  var list = curCat === "all" ? ITEMS : ITEMS.filter(function(it){return it.cat === curCat;});
+  grid.innerHTML = "";
+  list.forEach(function(it){
+    var card = document.createElement("div");
+    card.className = "card";
+    var cover = it.imgs[0];
+    var extra = it.imgs.length > 1 ? '<span class="cnt">'+it.imgs.length+' 张</span>' : "";
+    card.innerHTML =
+      '<div class="cover-wrap">' +
+        '<img class="cover" src="'+cover+'" alt="'+it.name+' 海报" loading="lazy">' +
+        '<div class="mask"></div>' +
+        '<span class="type-tag '+TAG_CLASS[it.cat]+'">'+CAT_NAME[it.cat]+'</span>' +
+        extra +
+        '<div class="info"><div class="name">'+it.name+'</div><div class="hint">点击查看详情</div></div>' +
+      '</div>';
+    card.addEventListener("click", function(){ openViewer(list.indexOf(it)); });
+    grid.appendChild(card);
+  });
+  empty.style.display = list.length ? "none" : "block";
+}
+
+/* ===== 分类切换 ===== */
+function setCat(key){
+  curCat = key;
+  renderTabs();
+  renderGrid();
+}
+
+/* ===== 全屏预览 ===== */
+var viewerList = [], viewerIdx = 0, zoom = 1, viewTotal = 0;
+
+function openViewer(idx){
+  viewerList = curCat === "all" ? ITEMS : ITEMS.filter(function(it){return it.cat === curCat;});
+  viewerIdx = 0;
+  for (var i=0;i<idx;i++){ viewerIdx += viewerList[i].imgs.length; }
+  zoom = 1;
+  viewTotal = viewerList.reduce(function(s,it){return s + it.imgs.length;}, 0);
+  buildSlide();
+  showViewer();
+}
+function buildSlide(){
+  var slide = document.getElementById("vSlide");
+  slide.innerHTML = "";
+  slide.style.transform = "translateX(-" + (viewerIdx * 100) + "%)";
+  var pos = 0;
+  viewerList.forEach(function(it){
+    it.imgs.forEach(function(u){
+      var item = document.createElement("div");
+      item.className = "v-item";
+      item.innerHTML = '<img class="v-img" src="'+u+'" alt="'+it.name+' 海报" style="transform:scale(1)">';
+      item.setAttribute("data-name", it.name);
+      slide.appendChild(item);
+      pos++;
+    });
+  });
+  var curName = slide.children[viewerIdx] ? slide.children[viewerIdx].getAttribute("data-name") : "";
+  document.getElementById("vTitle").textContent = curName;
+  document.getElementById("vPage").textContent = (viewerIdx + 1) + " / " + viewTotal;
+  resetZoomImgs();
+}
+function showViewer(){ document.getElementById("viewer").classList.add("show"); }
+function hideViewer(){ document.getElementById("viewer").classList.remove("show"); }
+function resetZoomImgs(){
+  zoom = 1;
+  var imgs = document.querySelectorAll("#vSlide .v-img");
+  for (var i=0;i<imgs.length;i++){ imgs[i].style.transform = "scale(1)"; }
+}
+function toggleZoom(){
+  zoom = zoom === 1 ? 1.8 : 1;
+  var imgs = document.querySelectorAll("#vSlide .v-img");
+  for (var i=0;i<imgs.length;i++){ imgs[i].style.transform = "scale("+zoom+")"; }
+}
+function moveTo(n){
+  if (!viewTotal) return;
+  viewerIdx = (n + viewTotal) % viewTotal;
+  buildSlide();
+}
+
+document.getElementById("vClose").addEventListener("click", hideViewer);
+document.getElementById("vPrev").addEventListener("click", function(){ moveTo(viewerIdx - 1); });
+document.getElementById("vNext").addEventListener("click", function(){ moveTo(viewerIdx + 1); });
+document.getElementById("vStage").addEventListener("click", function(e){
+  if (e.target.classList.contains("v-img")){ toggleZoom(); }
+});
+document.addEventListener("keydown", function(e){
+  if (!document.getElementById("viewer").classList.contains("show")) return;
+  if (e.key === "Escape") hideViewer();
+  if (e.key === "ArrowLeft") moveTo(viewerIdx - 1);
+  if (e.key === "ArrowRight") moveTo(viewerIdx + 1);
+});
+
+/* 触摸滑动切换 */
+var touchX = null;
+var stage = document.getElementById("vStage");
+stage.addEventListener("touchstart", function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+stage.addEventListener("touchend", function(e){
+  if (touchX === null) return;
+  var dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 48){
+    if (dx < 0) moveTo(viewerIdx + 1);
+    else moveTo(viewerIdx - 1);
+  }
+  touchX = null;
+}, {passive:true});
+
+/* ===== 联系客服 ===== */
+var toastTimer = null;
+function showToast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+document.getElementById("btnKook").addEventListener("click", function(){
+  if (CONTACT_URL){
+    window.open(CONTACT_URL, "_blank");
+  } else {
+    showToast("联系链接尚未配置：把代码里的 CONTACT_URL 换成你的 Kook 邀请链接即可");
+  }
+});
+document.getElementById("btnTop").addEventListener("click", function(){
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* ===== 初始化 ===== */
+renderTabs();
+renderGrid();
+</script>
+</body>
+</html>
