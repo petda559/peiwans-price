@@ -352,7 +352,28 @@ function renderTabs(){
   });
 }
 
+
+/* 懒加载：只有进入视口的图片才开始加载（IntersectionObserver；不支持时直接加载兜底） */
+var imgIO = ("IntersectionObserver" in window) ? new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(en.isIntersecting){
+      var im = en.target;
+      var s = im.getAttribute("data-src");
+      if(s){ im.src = s; im.removeAttribute("data-src"); }
+      imgIO.unobserve(im);
+    }
+  });
+}, {rootMargin:"200px 0px 200px 0px"}) : null;
+function regLazy(scope){
+  var imgs = (scope||document).querySelectorAll("img[data-src]");
+  for (var i=0;i<imgs.length;i++){
+    if(imgIO) imgIO.observe(imgs[i]);
+    else { imgs[i].src = imgs[i].getAttribute("data-src"); imgs[i].removeAttribute("data-src"); }
+  }
+}
+
 /* ===== 渲染卡片 ===== */
+
 function renderGrid(){
   var grid = document.getElementById("grid");
   var empty = document.getElementById("empty");
@@ -365,7 +386,7 @@ function renderGrid(){
     var extra = it.imgs.length > 1 ? '<span class="cnt">'+it.imgs.length+' 张</span>' : "";
     card.innerHTML =
       '<div class="cover-wrap">' +
-        '<img class="cover" src="'+cover+'" alt="'+it.name+' 海报" loading="lazy">' +
+        '<img class="cover" data-src="'+cover+'" alt="'+it.name+' 海报" loading="lazy">' +
         '<div class="mask"></div>' +
         '<span class="type-tag '+TAG_CLASS[it.cat]+'">'+CAT_NAME[it.cat]+'</span>' +
         extra +
@@ -375,6 +396,7 @@ function renderGrid(){
     grid.appendChild(card);
   });
   empty.style.display = list.length ? "none" : "block";
+  regLazy(grid);
 }
 
 /* ===== 分类切换 ===== */
@@ -405,7 +427,7 @@ function buildSlide(){
     it.imgs.forEach(function(u){
       var item = document.createElement("div");
       item.className = "v-item";
-      item.innerHTML = '<img class="v-img" src="'+u+'" alt="'+it.name+' 海报" style="transform:scale(1)">';
+      item.innerHTML = '<img class="v-img" data-src="'+u+'" alt="'+it.name+' 海报" style="transform:scale(1)">';
       item.setAttribute("data-name", it.name);
       slide.appendChild(item);
       pos++;
@@ -415,6 +437,7 @@ function buildSlide(){
   document.getElementById("vTitle").textContent = curName;
   document.getElementById("vPage").textContent = (viewerIdx + 1) + " / " + viewTotal;
   resetZoomImgs();
+  regLazy(slide);
 }
 function showViewer(){ document.getElementById("viewer").classList.add("show"); }
 function hideViewer(){ document.getElementById("viewer").classList.remove("show"); }
