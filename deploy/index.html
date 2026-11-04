@@ -66,6 +66,9 @@ img{display:block}
 .hero .stat b{color:var(--primary-deep);font-weight:700}
 
 /* ===== 分类筛选 ===== */
+.sub-head{display:flex;align-items:center;gap:8px;margin:18px 6px 10px;font-size:14px;font-weight:700;color:#7a5a8f}
+.sub-head .sub-tag{background:#f6ecff;border:1px solid #e3d2f5;padding:3px 10px;border-radius:999px;font-weight:700}
+.sub-head .n{font-size:12px;color:#b39ac8;font-weight:400}
 .tabs{
   position:sticky;top:0;z-index:20;
   background:rgba(255,245,247,.92);
@@ -331,11 +334,10 @@ var ITEMS = [
 
 var CATS = [
   {key:"all", label:"全部"},
-  {key:"price", label:"陪玩价格表"},
-  {key:"rule", label:"权益规则"},
-  {key:"fun", label:"趣味单"},
-  {key:"funrun", label:"跑刀趣味单"}
+  {key:"jianshi", label:"潮汐监狱专区"},
+  {key:"az3", label:"超临界AZ3专区"}
 ];
+var SUB_ORDER = ["price","rule","fun","funrun"];
 var CAT_NAME = {price:"陪玩价格表", rule:"权益规则", fun:"趣味单", funrun:"跑刀趣味单"};
 var TAG_CLASS = {price:"t-price", rule:"t-rule", fun:"t-fun", funrun:"t-funrun"};
 
@@ -346,7 +348,9 @@ function renderTabs(){
   var row = document.getElementById("tabRow");
   row.innerHTML = "";
   CATS.forEach(function(c){
-    var count = c.key === "all" ? ITEMS.length : ITEMS.filter(function(it){return it.cat === c.key;}).length;
+    var count = c.key === "all" ? ITEMS.length
+    : (c.key === "jianshi" ? ITEMS.filter(function(it){return SUB_ORDER.indexOf(it.cat) >= 0;}).length
+    : (c.key === "az3" ? 0 : ITEMS.filter(function(it){return it.cat === c.key;}).length));
     var b = document.createElement("button");
     b.className = "tab" + (c.key === curCat ? " on" : "");
     b.setAttribute("data-cat", c.key);
@@ -378,28 +382,49 @@ function regLazy(scope){
 
 /* ===== 渲染卡片 ===== */
 
+var curList = [];
+function makeCard(it){
+  var card = document.createElement("div");
+  card.className = "card";
+  var cover = it.imgs[0];
+  var extra = it.imgs.length > 1 ? '<span class="cnt">'+it.imgs.length+' 张</span>' : "";
+  card.innerHTML =
+    '<div class="cover-wrap">' +
+      '<img class="cover" data-src="'+cover+'" alt="'+it.name+' 海报" loading="lazy">' +
+      '<div class="mask"></div>' +
+      '<span class="type-tag '+TAG_CLASS[it.cat]+'">'+CAT_NAME[it.cat]+'</span>' +
+      extra +
+      '<div class="info"><div class="name">'+it.name+'</div><div class="hint">点击查看详情</div></div>' +
+    '</div>';
+  card.addEventListener("click", function(){ openViewer(curList.indexOf(it)); });
+  return card;
+}
+function subHead(k, n){
+  var h = document.createElement("div");
+  h.className = "sub-head";
+  h.innerHTML = '<span class="sub-tag">'+CAT_NAME[k]+'</span><span class="n">'+n+'</span>';
+  return h;
+}
 function renderGrid(){
   var grid = document.getElementById("grid");
   var empty = document.getElementById("empty");
-  var list = curCat === "all" ? ITEMS : ITEMS.filter(function(it){return it.cat === curCat;});
   grid.innerHTML = "";
-  list.forEach(function(it){
-    var card = document.createElement("div");
-    card.className = "card";
-    var cover = it.imgs[0];
-    var extra = it.imgs.length > 1 ? '<span class="cnt">'+it.imgs.length+' 张</span>' : "";
-    card.innerHTML =
-      '<div class="cover-wrap">' +
-        '<img class="cover" data-src="'+cover+'" alt="'+it.name+' 海报" loading="lazy">' +
-        '<div class="mask"></div>' +
-        '<span class="type-tag '+TAG_CLASS[it.cat]+'">'+CAT_NAME[it.cat]+'</span>' +
-        extra +
-        '<div class="info"><div class="name">'+it.name+'</div><div class="hint">点击查看详情</div></div>' +
-      '</div>';
-    card.addEventListener("click", function(){ openViewer(list.indexOf(it)); });
-    grid.appendChild(card);
-  });
-  empty.style.display = list.length ? "none" : "block";
+  curList = [];
+  var push = function(list){ list.forEach(function(it){ curList.push(it); grid.appendChild(makeCard(it)); }); };
+  if(curCat === "all"){
+    push(ITEMS);
+  }else if(curCat === "jianshi"){
+    SUB_ORDER.forEach(function(k){
+      var sub = ITEMS.filter(function(it){ return it.cat === k; });
+      if(!sub.length) return;
+      grid.appendChild(subHead(k, sub.length));
+      push(sub);
+    });
+  }else{
+    push(ITEMS.filter(function(it){ return it.cat === curCat; }));
+  }
+  empty.innerHTML = curCat === "az3" ? "超临界AZ3专区：暂时没有海报，敬请期待" : "该分类下暂时没有海报";
+  empty.style.display = curList.length ? "none" : "block";
   regLazy(grid);
 }
 
@@ -414,7 +439,7 @@ function setCat(key){
 var viewerList = [], viewerIdx = 0, zoom = 1, viewTotal = 0;
 
 function openViewer(idx){
-  viewerList = curCat === "all" ? ITEMS : ITEMS.filter(function(it){return it.cat === curCat;});
+  viewerList = curList;
   viewerIdx = 0;
   for (var i=0;i<idx;i++){ viewerIdx += viewerList[i].imgs.length; }
   zoom = 1;
