@@ -378,13 +378,17 @@ var ITEMS = [
 
 var CATS = [
   {key:"jianshi", label:"潮汐监狱专区"},
-  {key:"rule", label:"权益规则"},
-  {key:"az3", label:"超临界AZ3专区"}
+  {key:"az3", label:"超临界AZ3专区"},
+  {key:"rule", label:"权益规则"}
 ];
 var SUB_TABS = [
-  {key:"price", label:"陪玩价格分类"},
-  {key:"fun", label:"趣味单分类"},
-  {key:"funrun", label:"跑刀趣味单分类"}
+  {key:"price", label:"陪玩/护航价格"},
+  {key:"fun", label:"趣味单"},
+  {key:"funrun", label:"跑刀趣味单"}
+];
+var AZ3_TABS = [
+  {key:"price", label:"陪玩/护航价格"},
+  {key:"fun", label:"趣味单"}
 ];
 var CAT_NAME = {price:"陪玩价格表", rule:"权益规则", fun:"趣味单", funrun:"跑刀趣味单"};
 var TAG_CLASS = {price:"t-price", rule:"t-rule", fun:"t-fun", funrun:"t-funrun"};
@@ -414,9 +418,10 @@ function renderSubTabs(){
   var row = document.getElementById("subRow");
   if(!row) return;
   row.innerHTML = "";
-  if(curCat !== "jianshi"){ row.style.display = "none"; return; }
+  var tabs = curCat === "jianshi" ? SUB_TABS : (curCat === "az3" ? AZ3_TABS : null);
+  if(!tabs){ row.style.display = "none"; return; }
   row.style.display = "flex";
-  SUB_TABS.forEach(function(s){
+  tabs.forEach(function(s){
     var b = document.createElement("button");
     b.className = "tab sub" + (s.key === curSub ? " on" : "");
     b.innerHTML = '<span>'+s.label+'</span>';
@@ -472,6 +477,8 @@ function renderGrid(){
   var push = function(list){ list.forEach(function(it){ curList.push(it); grid.appendChild(makeCard(it)); }); };
   if(curCat === "jianshi"){
     push(ITEMS.filter(function(it){ return it.cat === curSub; }));
+  }else if(curCat === "az3"){
+    /* 超临界AZ3专区暂无条目 */
   }else{
     push(ITEMS.filter(function(it){ return it.cat === curCat; }));
   }
