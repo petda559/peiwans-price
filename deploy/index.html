@@ -325,6 +325,7 @@ var ITEMS = [
   {name:"摸贝小小巨人", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/W4yfb6xgwoX60Hx7eu9czT3Qnfe.png"]},
   {name:"我嘞个只吃金红", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/MPYVbkUSmog4cZxPi84cltGxnmh.png"]},
   {name:"GalaGame恋爱攻略单", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/IvWUbr3hRo4ML6xNE5Xc7LiZnNd.png"]},
+  {name:"超临界AZ3专区价格表", cat:"price", zone:"az3", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/az3-jiage.png"]}
 ];
 
 var CATS = [
@@ -353,8 +354,9 @@ function renderTabs(){
   row.innerHTML = "";
   CATS.forEach(function(c){
     var count = c.key === "jianshi"
-      ? ITEMS.filter(function(it){return SUB_TABS.some(function(s){return s.key === it.cat;});}).length
-      : (c.key === "az3" ? 0 : ITEMS.filter(function(it){return it.cat === c.key;}).length);
+      ? ITEMS.filter(function(it){return SUB_TABS.some(function(s){return s.key === it.cat;}) && !it.zone;}).length
+      : (c.key === "az3" ? ITEMS.filter(function(it){return it.zone === "az3";}).length
+      : ITEMS.filter(function(it){return it.cat === c.key;}).length);
     var b = document.createElement("button");
     b.className = "tab" + (c.key === curCat ? " on" : "");
     b.setAttribute("data-cat", c.key);
@@ -427,9 +429,9 @@ function renderGrid(){
   curList = [];
   var push = function(list){ list.forEach(function(it){ curList.push(it); grid.appendChild(makeCard(it)); }); };
   if(curCat === "jianshi"){
-    push(ITEMS.filter(function(it){ return it.cat === curSub; }));
+    push(ITEMS.filter(function(it){ return it.cat === curSub && !it.zone; }));
   }else if(curCat === "az3"){
-    /* 超临界AZ3专区暂无条目 */
+    push(ITEMS.filter(function(it){ return it.zone === "az3" && it.cat === curSub; }));
   }else{
     push(ITEMS.filter(function(it){ return it.cat === curCat; }));
   }
