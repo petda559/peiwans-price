@@ -73,9 +73,10 @@ img{display:block}
 .hero .stat b{color:var(--primary-deep);font-weight:700}
 
 /* ===== 分类筛选 ===== */
-.tab.sub{font-size:12px;padding:5px 11px;border-radius:999px;background:#fdf2f7;color:#c24a76;border-color:#f3d4e2}
-.tab.sub.on{background:#e6709d;border-color:#e6709d;color:#fff;font-weight:600}
-.sub-row{margin-top:6px}
+.tab.sub{font-size:13px;padding:6px 2px;margin-right:16px;border-radius:0;background:transparent;border:none;color:#a06080;font-weight:500;min-width:0;flex:0 0 auto;box-shadow:none}
+.tab.sub.on{background:transparent;border:none;color:#d23c6e;font-weight:700}
+.tab.sub.on::after{content:"";display:block;height:2.5px;border-radius:2px;background:#d23c6e;margin-top:4px}
+.sub-row{margin-top:8px;gap:0 6px}
 .tabs{
   position:sticky;top:0;z-index:20;
   background:rgba(255,245,247,.92);
@@ -379,7 +380,7 @@ var ITEMS = [
 var CATS = [
   {key:"jianshi", label:"潮汐监狱专区"},
   {key:"az3", label:"超临界AZ3专区"},
-  {key:"rule", label:"权益规则"}
+  {key:"rule", label:"板板权益"}
 ];
 var SUB_TABS = [
   {key:"price", label:"陪玩/护航价格"},
@@ -390,7 +391,7 @@ var AZ3_TABS = [
   {key:"price", label:"陪玩/护航价格"},
   {key:"fun", label:"趣味单"}
 ];
-var CAT_NAME = {price:"陪玩价格表", rule:"权益规则", fun:"趣味单", funrun:"跑刀趣味单"};
+var CAT_NAME = {price:"陪玩价格表", rule:"板板权益", fun:"趣味单", funrun:"跑刀趣味单"};
 var TAG_CLASS = {price:"t-price", rule:"t-rule", fun:"t-fun", funrun:"t-funrun"};
 
 var curCat = "jianshi";
