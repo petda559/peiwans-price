@@ -66,9 +66,9 @@ img{display:block}
 .hero .stat b{color:var(--primary-deep);font-weight:700}
 
 /* ===== 分类筛选 ===== */
-.sub-head{display:flex;align-items:center;gap:8px;margin:18px 6px 10px;font-size:14px;font-weight:700;color:#7a5a8f}
-.sub-head .sub-tag{background:#f6ecff;border:1px solid #e3d2f5;padding:3px 10px;border-radius:999px;font-weight:700}
-.sub-head .n{font-size:12px;color:#b39ac8;font-weight:400}
+.tab.sub{font-size:12px;padding:5px 11px;border-radius:999px;background:#fdf2f7;color:#c24a76;border-color:#f3d4e2}
+.tab.sub.on{background:#e6709d;border-color:#e6709d;color:#fff;font-weight:600}
+.sub-row{margin-top:6px}
 .tabs{
   position:sticky;top:0;z-index:20;
   background:rgba(255,245,247,.92);
@@ -241,6 +241,7 @@ img{display:block}
 <!-- ===== 分类筛选 ===== -->
 <nav class="tabs" aria-label="分类筛选">
   <div class="row" id="tabRow"></div>
+  <div class="row sub-row" id="subRow" style="display:none"></div>
 </nav>
 
 <!-- ===== 卡片网格 ===== -->
@@ -333,29 +334,50 @@ var ITEMS = [
 ];
 
 var CATS = [
-  {key:"all", label:"全部"},
   {key:"jianshi", label:"潮汐监狱专区"},
+  {key:"rule", label:"权益规则"},
   {key:"az3", label:"超临界AZ3专区"}
 ];
-var SUB_ORDER = ["price","rule","fun","funrun"];
+var SUB_TABS = [
+  {key:"price", label:"陪玩价格分类"},
+  {key:"fun", label:"趣味单分类"},
+  {key:"funrun", label:"跑刀趣味单分类"}
+];
 var CAT_NAME = {price:"陪玩价格表", rule:"权益规则", fun:"趣味单", funrun:"跑刀趣味单"};
 var TAG_CLASS = {price:"t-price", rule:"t-rule", fun:"t-fun", funrun:"t-funrun"};
 
-var curCat = "all";
+var curCat = "jianshi";
+var curSub = "price";
 
 /* ===== 渲染筛选标签 ===== */
 function renderTabs(){
   var row = document.getElementById("tabRow");
   row.innerHTML = "";
   CATS.forEach(function(c){
-    var count = c.key === "all" ? ITEMS.length
-    : (c.key === "jianshi" ? ITEMS.filter(function(it){return SUB_ORDER.indexOf(it.cat) >= 0;}).length
-    : (c.key === "az3" ? 0 : ITEMS.filter(function(it){return it.cat === c.key;}).length));
+    var count = c.key === "jianshi"
+      ? ITEMS.filter(function(it){return SUB_TABS.some(function(s){return s.key === it.cat;});}).length
+      : (c.key === "az3" ? 0 : ITEMS.filter(function(it){return it.cat === c.key;}).length);
     var b = document.createElement("button");
     b.className = "tab" + (c.key === curCat ? " on" : "");
     b.setAttribute("data-cat", c.key);
     b.innerHTML = '<span>'+c.label+'</span><span class="n">'+count+'</span>';
     b.addEventListener("click", function(){ setCat(c.key); });
+    row.appendChild(b);
+  });
+}
+
+/* ===== 潮汐监狱专区子分类 ===== */
+function renderSubTabs(){
+  var row = document.getElementById("subRow");
+  if(!row) return;
+  row.innerHTML = "";
+  if(curCat !== "jianshi"){ row.style.display = "none"; return; }
+  row.style.display = "flex";
+  SUB_TABS.forEach(function(s){
+    var b = document.createElement("button");
+    b.className = "tab sub" + (s.key === curSub ? " on" : "");
+    b.innerHTML = '<span>'+s.label+'</span>';
+    b.addEventListener("click", function(){ curSub = s.key; renderSubTabs(); renderGrid(); });
     row.appendChild(b);
   });
 }
@@ -399,27 +421,14 @@ function makeCard(it){
   card.addEventListener("click", function(){ openViewer(curList.indexOf(it)); });
   return card;
 }
-function subHead(k, n){
-  var h = document.createElement("div");
-  h.className = "sub-head";
-  h.innerHTML = '<span class="sub-tag">'+CAT_NAME[k]+'</span><span class="n">'+n+'</span>';
-  return h;
-}
 function renderGrid(){
   var grid = document.getElementById("grid");
   var empty = document.getElementById("empty");
   grid.innerHTML = "";
   curList = [];
   var push = function(list){ list.forEach(function(it){ curList.push(it); grid.appendChild(makeCard(it)); }); };
-  if(curCat === "all"){
-    push(ITEMS);
-  }else if(curCat === "jianshi"){
-    SUB_ORDER.forEach(function(k){
-      var sub = ITEMS.filter(function(it){ return it.cat === k; });
-      if(!sub.length) return;
-      grid.appendChild(subHead(k, sub.length));
-      push(sub);
-    });
+  if(curCat === "jianshi"){
+    push(ITEMS.filter(function(it){ return it.cat === curSub; }));
   }else{
     push(ITEMS.filter(function(it){ return it.cat === curCat; }));
   }
@@ -432,6 +441,7 @@ function renderGrid(){
 function setCat(key){
   curCat = key;
   renderTabs();
+  renderSubTabs();
   renderGrid();
 }
 
@@ -535,6 +545,7 @@ document.getElementById("btnTop").addEventListener("click", function(){
 
 /* ===== 初始化 ===== */
 renderTabs();
+renderSubTabs();
 renderGrid();
 </script>
 </body>
