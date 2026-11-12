@@ -1,6 +1,6 @@
 {
-  "src": "index.html",
-  "url": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/index.html",
+  "src": "免保陪玩价格表.html",
+  "url": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/%E5%85%8D%E4%BF%9D%E9%99%AA%E7%8E%A9%E4%BB%B7%E6%A0%BC%E8%A1%A8.html",
   "outdir": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots",
   "include": [
     "lint",
@@ -8,74 +8,17 @@
     "structure"
   ],
   "shots": {
-    "desktop": {
-      "revealed": 0,
-      "screenshot": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_desktop.jpg",
-      "screenshotBytes": 497018,
-      "truncated": false,
-      "structure": {
-        "title": "免保陪玩 · 价格表",
-        "firstH1": "免保陪玩",
-        "viewport": {
-          "w": 1440,
-          "h": 900
-        },
-        "fullpage": {
-          "w": 1440,
-          "h": 4490
-        },
-        "counts": {
-          "section": 0,
-          "h1": 1,
-          "h2": 0,
-          "img": 34,
-          "canvas": 0,
-          "svg": 2,
-          "links": 0,
-          "buttons": 10
-        }
-      },
-      "consoleErrors": [],
-      "consoleWarnings": [],
-      "horizontalOverflow": [],
-      "resourceErrors": [],
-      "orphanCardsWarning": [
-        {
-          "tag": "main",
-          "count": 33,
-          "cols": 4,
-          "rows": [
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            1
-          ],
-          "rect": [
-            180,
-            330,
-            1080,
-            3997
-          ],
-          "cls": "grid"
-        }
-      ],
-      "orphanCardsHint": "warning · 含义：等宽卡片组最后一行只剩 1 个（`rows` 是每行个数，如 `[3,1]`），右侧拖一大片空白、上重下轻。判据是 `N % C == 1`（卡片数对列数取余）。 | 修法：让列数序列**跳过**这一档——4 张走 `4 → 2 → 1`（跳过 3 列）。卡片数固定就直接给这个栅格改断点即可；数量运行时才定，用 `.cards:has(> :nth-child(4):last-child)` 配媒体查询切列数，**通用那条要写成 `:not(:has(...))` 与它互斥**，否则 `:has()` 特异性更高，会压住宽屏那档、把 4 张永久钉在 2 列。 | 豁免：(1) 2 列档不报——那时孤儿等价于 N 为奇数，无解；(2) 最后一个已跨满整行的不报；(3) 瀑布流、自然宽度、刻意的非对称布局。"
-    },
     "mobile": {
       "revealed": 0,
-      "slices": [
-        "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_mobile_p1of2.jpg",
-        "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_mobile_p2of2.jpg"
-      ],
-      "sliceHint": "按顺序 Read slices 里的各分片。",
+      "eval": {
+        "executed": true,
+        "result": null
+      },
+      "screenshot": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/免保陪玩价格表_mobile.jpg",
+      "screenshotBytes": 74229,
       "truncated": false,
       "structure": {
-        "title": "免保陪玩 · 价格表",
+        "title": "免保陪玩价格表",
         "firstH1": "免保陪玩",
         "viewport": {
           "w": 390,
@@ -83,28 +26,36 @@
         },
         "fullpage": {
           "w": 390,
-          "h": 5944
+          "h": 1169
         },
         "counts": {
           "section": 0,
           "h1": 1,
           "h2": 0,
-          "img": 34,
+          "img": 5,
           "canvas": 0,
           "svg": 2,
           "links": 0,
-          "buttons": 10
+          "buttons": 11
         }
       },
       "consoleErrors": [],
       "consoleWarnings": [],
       "horizontalOverflow": [],
-      "resourceErrors": []
+      "resourceErrors": [],
+      "localImageWarnings": [
+        {
+          "tag": "img",
+          "attr": "src",
+          "url": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/assets/share-cover-card.jpg"
+        }
+      ],
+      "localImageHint": "含义：页面里存在 file:// 本地图片引用。云电脑交付的 HTML 不能包含文件系统引用。 | 修法：对每张图跑 `lark-cli drive +html-image-upload --file <图片路径>`，把返回里 data.url 的链接换进 <img src>；图片文件本身保留在 assets/ 里不要删。 | 豁免：本地电脑（Computer OS 为 Windows / Mac）不报此项——那里用 assets/ 相对路径引用是规定做法。本规则只匹配 file://，http(s)/data URI 都不会报。"
     }
   },
   "engine": "playwright",
   "chromiumExec": "/opt/vm/preinstall/ms-playwright/chromium-1169/chrome-linux/chrome",
-  "elapsedSec": 15.49,
+  "elapsedSec": 9.23,
   "schemaVersion": 2,
   "status": "warning",
   "engineInfo": {
@@ -113,9 +64,9 @@
     "degradedReasons": []
   },
   "input": {
-    "original": "index.html",
-    "resolvedPath": "/home/user/Doubao/chats/38451016502538242/peiwans-price/index.html",
-    "baseUrl": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/index.html",
+    "original": "免保陪玩价格表.html",
+    "resolvedPath": "/home/user/Doubao/chats/38451016502538242/peiwans-price/免保陪玩价格表.html",
+    "baseUrl": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/%E5%85%8D%E4%BF%9D%E9%99%AA%E7%8E%A9%E4%BB%B7%E6%A0%BC%E8%A1%A8.html",
     "protocol": "file",
     "cwd": "/home/user/Doubao/chats/38451016502538242/peiwans-price",
     "mediaMode": {
@@ -125,20 +76,9 @@
   "artifacts": {
     "screenshots": [
       {
-        "viewport": "desktop",
-        "path": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_desktop.jpg",
-        "size": 497018,
-        "visualCoverage": {
-          "complete": true,
-          "reason": null
-        }
-      },
-      {
         "viewport": "mobile",
-        "tiles": [
-          "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_mobile_p1of2.jpg",
-          "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/index_mobile_p2of2.jpg"
-        ],
+        "path": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/免保陪玩价格表_mobile.jpg",
+        "size": 74229,
         "visualCoverage": {
           "complete": true,
           "reason": null
@@ -154,43 +94,25 @@
   },
   "findings": [
     {
-      "ruleId": "orphanCardsWarning",
+      "ruleId": "localImageWarnings",
       "severity": "warning",
-      "kind": "layout",
-      "viewport": "desktop",
-      "selector": "main.grid",
+      "kind": "publish",
+      "viewport": "mobile",
+      "selector": "img",
       "evidence": {
-        "tag": "main",
-        "count": 33,
-        "cols": 4,
-        "rows": [
-          4,
-          4,
-          4,
-          4,
-          4,
-          4,
-          4,
-          4,
-          1
-        ],
-        "rect": [
-          180,
-          330,
-          1080,
-          3997
-        ],
-        "cls": "grid"
+        "tag": "img",
+        "attr": "src",
+        "url": "file:///home/user/Doubao/chats/38451016502538242/peiwans-price/assets/share-cover-card.jpg"
       },
-      "dedupeKey": "orphanCardsWarning|desktop|main.grid|0"
+      "dedupeKey": "localImageWarnings|mobile|img|0"
     }
   ],
   "prioritizedActions": [
     {
-      "ruleId": "orphanCardsWarning",
+      "ruleId": "localImageWarnings",
       "severity": "warning",
-      "viewport": "desktop",
-      "selector": "main.grid"
+      "viewport": "mobile",
+      "selector": "img"
     }
   ],
   "reportPath": "/home/user/Doubao/chats/38451016502538242/peiwans-price/_shots/report.json"
