@@ -226,6 +226,11 @@ img{display:block}
   font-size:12px;color:var(--muted);line-height:1.7;
 }
 
+/* ===== 手机端子菜单：三项等宽一行，不换行 ===== */
+@media (max-width:719px){
+  .sub-row{flex-wrap:nowrap;gap:0 6px;overflow:hidden}
+  .sub-row .tab.sub{flex:1 1 0;min-width:0;margin-right:0;padding:9px 3px;font-size:12.5px;justify-content:center}
+}
 /* ===== 桌面扩展 ===== */
 @media (min-width:720px){
   .tabs .row{flex-wrap:nowrap;gap:8px}
