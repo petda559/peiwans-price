@@ -540,11 +540,19 @@ function hideViewer(){
   document.getElementById("viewer").classList.remove("show");
   resetZoom();
 }
-function moveTo(n){
+function goTo(n){
   if (!viewTotal) return;
-  viewerIdx = (n + viewTotal) % viewTotal;
-  buildSlide();
+  n = Math.max(0, Math.min(viewTotal - 1, n));
+  if (n === viewerIdx) return;
+  viewerIdx = n;
+  var slide = document.getElementById("vSlide");
+  slide.style.transform = "translateX(-" + (viewerIdx * 100) + "%)";
+  var cur = slide.children[viewerIdx];
+  document.getElementById("vTitle").textContent = cur ? cur.getAttribute("data-name") : "";
+  document.getElementById("vPage").textContent = (viewerIdx + 1) + " / " + viewTotal;
+  resetZoom();
 }
+function moveTo(n){ goTo(n); }
 
 /* --- 手势状态 --- */
 var g = { mode: 0, sx: 0, sy: 0, stx: 0, sty: 0, d0: 0, z0: 1, moved: false, t0: 0, lastEnd: 0 };
