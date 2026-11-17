@@ -201,6 +201,8 @@ img{display:block}
 @media (max-width:719px){
   .sub-row{flex-wrap:nowrap;gap:0 6px;overflow:hidden}
   .sub-row .tab.sub{flex:1 1 0;min-width:0;margin-right:0;padding:9px 3px;font-size:12.5px;justify-content:center}
+  .tabs .row:not(.sub-row){flex-wrap:wrap;gap:8px 6px}
+  .tabs .row:not(.sub-row) .tab{flex:0 0 calc(50% - 4px);min-width:0}
 }
 /* ===== 桌面扩展 ===== */
 @media (min-width:720px){
@@ -329,6 +331,7 @@ var ITEMS = [
 var CATS = [
   {key:"jianshi", label:"潮汐监狱专区"},
   {key:"az3", label:"超临界AZ3专区"},
+  {key:"bakeshi", label:"巴克什专区"},
   {key:"rule", label:"板板权益"}
 ];
 var SUB_TABS = [
@@ -337,6 +340,10 @@ var SUB_TABS = [
   {key:"funrun", label:"跑刀趣味单"}
 ];
 var AZ3_TABS = [
+  {key:"price", label:"陪玩/护航价格"},
+  {key:"fun", label:"趣味单"}
+];
+var BAKESHI_TABS = [
   {key:"price", label:"陪玩/护航价格"},
   {key:"fun", label:"趣味单"}
 ];
@@ -353,7 +360,7 @@ function renderTabs(){
   CATS.forEach(function(c){
     var count = c.key === "jianshi"
       ? ITEMS.filter(function(it){return SUB_TABS.some(function(s){return s.key === it.cat;}) && !it.zone;}).length
-      : (c.key === "az3" ? ITEMS.filter(function(it){return it.zone === "az3";}).length
+      : ((c.key === "az3" || c.key === "bakeshi") ? ITEMS.filter(function(it){return it.zone === c.key;}).length
       : ITEMS.filter(function(it){return it.cat === c.key;}).length);
     var b = document.createElement("button");
     b.className = "tab" + (c.key === curCat ? " on" : "");
@@ -369,7 +376,7 @@ function renderSubTabs(){
   var row = document.getElementById("subRow");
   if(!row) return;
   row.innerHTML = "";
-  var tabs = curCat === "jianshi" ? SUB_TABS : (curCat === "az3" ? AZ3_TABS : null);
+  var tabs = curCat === "jianshi" ? SUB_TABS : (curCat === "az3" ? AZ3_TABS : (curCat === "bakeshi" ? BAKESHI_TABS : null));
   if(!tabs){ row.style.display = "none"; return; }
   row.style.display = "flex";
   tabs.forEach(function(s){
@@ -428,12 +435,13 @@ function renderGrid(){
   var push = function(list){ list.forEach(function(it){ curList.push(it); grid.appendChild(makeCard(it)); }); };
   if(curCat === "jianshi"){
     push(ITEMS.filter(function(it){ return it.cat === curSub && !it.zone; }));
-  }else if(curCat === "az3"){
-    push(ITEMS.filter(function(it){ return it.zone === "az3" && it.cat === curSub; }));
+  }else if(curCat === "az3" || curCat === "bakeshi"){
+    push(ITEMS.filter(function(it){ return it.zone === curCat && it.cat === curSub; }));
   }else{
     push(ITEMS.filter(function(it){ return it.cat === curCat; }));
   }
-  empty.innerHTML = curCat === "az3" ? "超临界AZ3专区：暂时没有海报，敬请期待" : "该分类下暂时没有海报";
+  empty.innerHTML = curCat === "az3" ? "超临界AZ3专区：暂时没有海报，敬请期待"
+    : (curCat === "bakeshi" ? "巴克什专区：暂时没有海报，敬请期待" : "该分类下暂时没有海报");
   empty.style.display = curList.length ? "none" : "block";
   regLazy(grid);
 }
