@@ -165,12 +165,13 @@ img{display:block}
   width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);
   color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;
 }
-.viewer .v-stage{flex:1;position:relative;overflow:hidden;touch-action:pan-y}
+.viewer .v-stage{flex:1;position:relative;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
 .viewer .v-slide{position:absolute;inset:0;display:flex;transition:transform .28s ease}
 .viewer .v-item{flex:0 0 100%;display:flex;align-items:center;justify-content:center;padding:0 6px}
 .viewer img.v-img{
   max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;
   transition:transform .18s ease;transform-origin:center;
+  user-select:none;-webkit-user-select:none;-webkit-user-drag:none;will-change:transform;
 }
 .viewer .v-nav{
   display:flex;justify-content:space-between;align-items:center;
@@ -461,50 +462,82 @@ function setCat(key){
   renderGrid();
 }
 
-/* ===== 全屏预览 ===== */
-var viewerList = [], viewerIdx = 0, zoom = 1, viewTotal = 0;
+/* ===== 全屏预览（自由缩放 + 拖动） ===== */
+var viewerList = [], viewerIdx = 0, viewTotal = 0;
+var zoom = 1, tx = 0, ty = 0;
+var MAX_ZOOM = 5;
 
+function curImg(){
+  var it = document.getElementById("vSlide").children[viewerIdx];
+  return it ? it.querySelector(".v-img") : null;
+}
+function updateZoomHint(){
+  var el = document.getElementById("vZoom");
+  if (!el) return;
+  el.textContent = zoom > 1.01
+    ? "双指捏合缩放 / 拖动查看 · 点击还原（" + Math.round(zoom * 100) + "%）"
+    : "双击或捏合放大 · 左右滑动切换";
+}
+function applyTransform(smooth){
+  var img = curImg();
+  if (!img) return;
+  img.style.transition = smooth ? "transform .16s ease" : "none";
+  img.style.transform = "translate3d(" + tx + "px," + ty + "px,0) scale(" + zoom + ")";
+  updateZoomHint();
+}
+function clampPan(){
+  var img = curImg();
+  if (!img) return;
+  var mx = Math.max(0, img.clientWidth * (zoom - 1) / 2);
+  var my = Math.max(0, img.clientHeight * (zoom - 1) / 2);
+  tx = Math.min(mx, Math.max(-mx, tx));
+  ty = Math.min(my, Math.max(-my, ty));
+}
+function zoomTo(z, smooth){
+  zoom = Math.min(MAX_ZOOM, Math.max(1, z));
+  if (zoom <= 1.02){ zoom = 1; tx = 0; ty = 0; }
+  clampPan();
+  applyTransform(smooth !== false);
+}
+function resetZoom(){
+  zoom = 1; tx = 0; ty = 0;
+  var imgs = document.querySelectorAll("#vSlide .v-img");
+  for (var i = 0; i < imgs.length; i++){
+    imgs[i].style.transition = "none";
+    imgs[i].style.transform = "translate3d(0,0,0) scale(1)";
+  }
+  updateZoomHint();
+}
 function openViewer(idx){
   viewerList = curList;
   viewerIdx = 0;
-  for (var i=0;i<idx;i++){ viewerIdx += viewerList[i].imgs.length; }
-  zoom = 1;
-  viewTotal = viewerList.reduce(function(s,it){return s + it.imgs.length;}, 0);
+  for (var i = 0; i < idx; i++){ viewerIdx += viewerList[i].imgs.length; }
+  viewTotal = viewerList.reduce(function(s, it){ return s + it.imgs.length; }, 0);
   buildSlide();
-  showViewer();
+  document.getElementById("viewer").classList.add("show");
 }
 function buildSlide(){
   var slide = document.getElementById("vSlide");
   slide.innerHTML = "";
   slide.style.transform = "translateX(-" + (viewerIdx * 100) + "%)";
-  var pos = 0;
   viewerList.forEach(function(it){
     it.imgs.forEach(function(u){
       var item = document.createElement("div");
       item.className = "v-item";
-      item.innerHTML = '<img class="v-img" data-src="'+u+'" alt="'+it.name+' 海报" style="transform:scale(1)">';
+      item.innerHTML = '<img class="v-img" data-src="' + u + '" alt="' + it.name + ' 海报">';
       item.setAttribute("data-name", it.name);
       slide.appendChild(item);
-      pos++;
     });
   });
-  var curName = slide.children[viewerIdx] ? slide.children[viewerIdx].getAttribute("data-name") : "";
-  document.getElementById("vTitle").textContent = curName;
+  var cur = slide.children[viewerIdx];
+  document.getElementById("vTitle").textContent = cur ? cur.getAttribute("data-name") : "";
   document.getElementById("vPage").textContent = (viewerIdx + 1) + " / " + viewTotal;
-  resetZoomImgs();
+  resetZoom();
   regLazy(slide);
 }
-function showViewer(){ document.getElementById("viewer").classList.add("show"); }
-function hideViewer(){ document.getElementById("viewer").classList.remove("show"); }
-function resetZoomImgs(){
-  zoom = 1;
-  var imgs = document.querySelectorAll("#vSlide .v-img");
-  for (var i=0;i<imgs.length;i++){ imgs[i].style.transform = "scale(1)"; }
-}
-function toggleZoom(){
-  zoom = zoom === 1 ? 1.8 : 1;
-  var imgs = document.querySelectorAll("#vSlide .v-img");
-  for (var i=0;i<imgs.length;i++){ imgs[i].style.transform = "scale("+zoom+")"; }
+function hideViewer(){
+  document.getElementById("viewer").classList.remove("show");
+  resetZoom();
 }
 function moveTo(n){
   if (!viewTotal) return;
@@ -512,32 +545,85 @@ function moveTo(n){
   buildSlide();
 }
 
+/* --- 手势状态 --- */
+var g = { mode: 0, sx: 0, sy: 0, stx: 0, sty: 0, d0: 0, z0: 1, moved: false, t0: 0 };
+var stage = document.getElementById("vStage");
+
+function tdist(a, b){
+  var dx = a.clientX - b.clientX, dy = a.clientY - b.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+stage.addEventListener("touchstart", function(e){
+  if (e.touches.length === 2){
+    g.mode = 2; g.d0 = tdist(e.touches[0], e.touches[1]); g.z0 = zoom; g.moved = true;
+  } else if (e.touches.length === 1){
+    g.mode = 1; g.sx = e.touches[0].clientX; g.sy = e.touches[0].clientY;
+    g.stx = tx; g.sty = ty; g.moved = false; g.t0 = Date.now();
+  }
+}, { passive: true });
+
+stage.addEventListener("touchmove", function(e){
+  if (g.mode === 2 && e.touches.length === 2){
+    var d = tdist(e.touches[0], e.touches[1]);
+    if (g.d0 > 0){ zoomTo(g.z0 * (d / g.d0), false); }
+    if (e.cancelable) e.preventDefault();
+  } else if (g.mode === 1 && e.touches.length === 1 && zoom > 1.01){
+    var dx = e.touches[0].clientX - g.sx, dy = e.touches[0].clientY - g.sy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4){ g.moved = true; }
+    tx = g.stx + dx; ty = g.sty + dy;
+    clampPan(); applyTransform(false);
+    if (e.cancelable) e.preventDefault();
+  }
+}, { passive: false });
+
+stage.addEventListener("touchend", function(e){
+  var was = g.mode;
+  if (e.touches.length > 0) return;
+  g.mode = 0;
+  if (was === 2){
+    if (zoom < 1.05) zoomTo(1, true); else g.moved = true;
+    return;
+  }
+  if (was !== 1) return;
+  var dx = e.changedTouches[0].clientX - g.sx;
+  var dy = e.changedTouches[0].clientY - g.sy;
+  var quick = (Date.now() - g.t0) < 280;
+  if (zoom > 1.01){
+    if (!g.moved && quick){ zoomTo(1, true); }
+    return;
+  }
+  if (!g.moved && quick && Math.abs(dx) < 8 && Math.abs(dy) < 8){
+    zoomTo(2.4, true); return;
+  }
+  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)){
+    if (dx < 0) moveTo(viewerIdx + 1); else moveTo(viewerIdx - 1);
+  }
+}, { passive: true });
+
+/* 桌面：点击缩放 / 滚轮缩放 */
+stage.addEventListener("click", function(e){
+  if (!e.target.classList.contains("v-img")) return;
+  if ("ontouchstart" in window) return;
+  if (zoom > 1.01) zoomTo(1, true); else zoomTo(2.4, true);
+});
+stage.addEventListener("wheel", function(e){
+  if (!e.target.classList.contains("v-img")) return;
+  e.preventDefault();
+  zoomTo(zoom * (e.deltaY < 0 ? 1.15 : 0.87), false);
+}, { passive: false });
+
 document.getElementById("vClose").addEventListener("click", hideViewer);
 document.getElementById("vPrev").addEventListener("click", function(){ moveTo(viewerIdx - 1); });
 document.getElementById("vNext").addEventListener("click", function(){ moveTo(viewerIdx + 1); });
-document.getElementById("vStage").addEventListener("click", function(e){
-  if (e.target.classList.contains("v-img")){ toggleZoom(); }
-});
 document.addEventListener("keydown", function(e){
   if (!document.getElementById("viewer").classList.contains("show")) return;
   if (e.key === "Escape") hideViewer();
   if (e.key === "ArrowLeft") moveTo(viewerIdx - 1);
   if (e.key === "ArrowRight") moveTo(viewerIdx + 1);
+  if (e.key === "+" || e.key === "=") zoomTo(zoom * 1.2, true);
+  if (e.key === "-") zoomTo(zoom / 1.2, true);
 });
-
-/* 触摸滑动切换 */
-var touchX = null;
-var stage = document.getElementById("vStage");
-stage.addEventListener("touchstart", function(e){ touchX = e.touches[0].clientX; }, {passive:true});
-stage.addEventListener("touchend", function(e){
-  if (touchX === null) return;
-  var dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 48){
-    if (dx < 0) moveTo(viewerIdx + 1);
-    else moveTo(viewerIdx - 1);
-  }
-  touchX = null;
-}, {passive:true});
 
 /* ===== 联系客服 ===== */
 var toastTimer = null;
