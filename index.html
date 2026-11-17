@@ -201,6 +201,7 @@ img{display:block}
   max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;
   transition:transform .18s ease;transform-origin:center;
   user-select:none;-webkit-user-select:none;-webkit-user-drag:none;will-change:transform;
+  -webkit-touch-callout:none;
 }
 .viewer .v-nav{
   display:flex;justify-content:space-between;align-items:center;
@@ -589,29 +590,43 @@ function moveTo(n){
 }
 
 /* --- 手势状态 --- */
-var g = { mode: 0, sx: 0, sy: 0, stx: 0, sty: 0, d0: 0, z0: 1, moved: false, t0: 0 };
+var g = { mode: 0, sx: 0, sy: 0, stx: 0, sty: 0, d0: 0, z0: 1, moved: false, t0: 0, lastEnd: 0 };
 var stage = document.getElementById("vStage");
 
 function tdist(a, b){
   var dx = a.clientX - b.clientX, dy = a.clientY - b.clientY;
   return Math.sqrt(dx * dx + dy * dy);
 }
+function tapZoom(){
+  var next = zoom < 1.5 ? 2.4 : (zoom < 3.2 ? 3.8 : (zoom < 4.8 ? 5 : 1));
+  zoomTo(next, true);
+}
+function pinchStart(e){
+  if (e.touches.length < 2) return false;
+  g.mode = 2;
+  g.d0 = tdist(e.touches[0], e.touches[1]) || 1;
+  g.z0 = zoom;
+  g.moved = true;
+  return true;
+}
 
 stage.addEventListener("touchstart", function(e){
-  if (e.touches.length === 2){
-    g.mode = 2; g.d0 = tdist(e.touches[0], e.touches[1]); g.z0 = zoom; g.moved = true;
-  } else if (e.touches.length === 1){
+  if (e.touches.length >= 2){ pinchStart(e); return; }
+  if (e.touches.length === 1 && g.mode !== 2){
     g.mode = 1; g.sx = e.touches[0].clientX; g.sy = e.touches[0].clientY;
     g.stx = tx; g.sty = ty; g.moved = false; g.t0 = Date.now();
   }
 }, { passive: true });
 
 stage.addEventListener("touchmove", function(e){
-  if (g.mode === 2 && e.touches.length === 2){
+  if (e.touches.length >= 2){
+    if (g.mode !== 2 && !pinchStart(e)) return;
     var d = tdist(e.touches[0], e.touches[1]);
     if (g.d0 > 0){ zoomTo(g.z0 * (d / g.d0), false); }
     if (e.cancelable) e.preventDefault();
-  } else if (g.mode === 1 && e.touches.length === 1 && zoom > 1.01){
+    return;
+  }
+  if (g.mode === 1 && e.touches.length === 1 && zoom > 1.01){
     var dx = e.touches[0].clientX - g.sx, dy = e.touches[0].clientY - g.sy;
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4){ g.moved = true; }
     tx = g.stx + dx; ty = g.sty + dy;
@@ -621,34 +636,33 @@ stage.addEventListener("touchmove", function(e){
 }, { passive: false });
 
 stage.addEventListener("touchend", function(e){
+  g.lastEnd = Date.now();
   var was = g.mode;
   if (e.touches.length > 0) return;
   g.mode = 0;
   if (was === 2){
-    if (zoom < 1.05) zoomTo(1, true); else g.moved = true;
+    if (zoom < 1.05) zoomTo(1, true);
     return;
   }
   if (was !== 1) return;
   var dx = e.changedTouches[0].clientX - g.sx;
   var dy = e.changedTouches[0].clientY - g.sy;
-  var quick = (Date.now() - g.t0) < 280;
-  if (zoom > 1.01){
-    if (!g.moved && quick){ zoomTo(1, true); }
-    return;
+  var quick = (Date.now() - g.t0) < 300;
+  if (!g.moved && quick && Math.abs(dx) < 10 && Math.abs(dy) < 10){
+    tapZoom(); return;
   }
-  if (!g.moved && quick && Math.abs(dx) < 8 && Math.abs(dy) < 8){
-    zoomTo(2.4, true); return;
-  }
+  if (zoom > 1.01) return;
   if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)){
     if (dx < 0) moveTo(viewerIdx + 1); else moveTo(viewerIdx - 1);
   }
 }, { passive: true });
 
-/* 桌面：点击缩放 / 滚轮缩放 */
+/* 桌面：点击缩放 / 滚轮缩放。触屏的点击交给上面的手势，避免互相抵消 */
 stage.addEventListener("click", function(e){
   if (!e.target.classList.contains("v-img")) return;
-  if ("ontouchstart" in window) return;
-  if (zoom > 1.01) zoomTo(1, true); else zoomTo(2.4, true);
+  if ("ontouchstart" in window || navigator.maxTouchPoints > 0) return;
+  if (Date.now() - g.lastEnd < 400) return;
+  tapZoom();
 });
 stage.addEventListener("wheel", function(e){
   if (!e.target.classList.contains("v-img")) return;
