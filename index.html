@@ -230,8 +230,9 @@ img{display:block}
 @media (max-width:719px){
   .sub-row{flex-wrap:nowrap;gap:0 6px;overflow:hidden}
   .sub-row .tab.sub{flex:1 1 0;min-width:0;margin-right:0;padding:9px 3px;font-size:12.5px;justify-content:center}
-  .tabs .row:not(.sub-row){flex-wrap:wrap;gap:8px 6px}
-  .tabs .row:not(.sub-row) .tab{flex:0 0 calc(50% - 4px);min-width:0}
+  .tabs .row:not(.sub-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 6px}
+  .tabs .row:not(.sub-row) .tab{min-width:0;padding-left:4px;padding-right:4px}
+  .tabs .row:not(.sub-row) .tab:last-child:nth-child(odd){grid-column:1 / -1}
 }
 /* ===== 桌面扩展 ===== */
 @media (min-width:720px){
