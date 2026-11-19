@@ -372,14 +372,12 @@ var ITEMS = [
   {name:"摸贝小小巨人", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/W4yfb6xgwoX60Hx7eu9czT3Qnfe.png"]},
   {name:"我嘞个只吃金红", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/MPYVbkUSmog4cZxPi84cltGxnmh.png"]},
   {name:"GalaGame恋爱攻略单", cat:"funrun", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/galagame-liangonglue-v8.png"]},
-  {name:"超临界AZ3专区价格表", cat:"price", zone:"az3", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/az3-jiage.png"]},
   {name:"巴克什专区价格表", cat:"price", zone:"bakeshi", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/bakeshi-jiage.png"]},
   {name:"机密陪玩价格表", cat:"price", zone:"jimi", imgs:["https://patheia-1323749045.cos.ap-shanghai.myqcloud.com/peiwans-price/img/jimi-peiwan-jiage-v2.png"]}
 ];
 
 var CATS = [
   {key:"jianshi", label:"潮汐监狱专区"},
-  {key:"az3", label:"超临界AZ3专区"},
   {key:"bakeshi", label:"巴克什专区"},
   {key:"jimi", label:"机密陪玩专区"},
   {key:"rule", label:"板板权益"}
@@ -388,10 +386,6 @@ var SUB_TABS = [
   {key:"price", label:"陪玩/护航价格"},
   {key:"fun", label:"趣味单"},
   {key:"funrun", label:"跑刀趣味单"}
-];
-var AZ3_TABS = [
-  {key:"price", label:"陪玩/护航价格"},
-  {key:"fun", label:"趣味单"}
 ];
 var BAKESHI_TABS = [
   {key:"price", label:"陪玩/护航价格"},
@@ -410,7 +404,7 @@ function renderTabs(){
   CATS.forEach(function(c){
     var count = c.key === "jianshi"
       ? ITEMS.filter(function(it){return SUB_TABS.some(function(s){return s.key === it.cat;}) && !it.zone;}).length
-      : ((c.key === "az3" || c.key === "bakeshi" || c.key === "jimi") ? ITEMS.filter(function(it){return it.zone === c.key;}).length
+      : ((c.key === "bakeshi" || c.key === "jimi") ? ITEMS.filter(function(it){return it.zone === c.key;}).length
       : ITEMS.filter(function(it){return it.cat === c.key;}).length);
     var b = document.createElement("button");
     b.className = "tab" + (c.key === curCat ? " on" : "");
@@ -426,7 +420,7 @@ function renderSubTabs(){
   var row = document.getElementById("subRow");
   if(!row) return;
   row.innerHTML = "";
-  var tabs = curCat === "jianshi" ? SUB_TABS : (curCat === "az3" ? AZ3_TABS : (curCat === "bakeshi" ? BAKESHI_TABS : null));
+  var tabs = curCat === "jianshi" ? SUB_TABS : (curCat === "bakeshi" ? BAKESHI_TABS : null);
   if(!tabs){ row.style.display = "none"; return; }
   row.style.display = "flex";
   tabs.forEach(function(s){
@@ -487,14 +481,13 @@ function renderGrid(){
     push(ITEMS.filter(function(it){ return it.cat === curSub && !it.zone; }));
   }else if(curCat === "jimi"){
     push(ITEMS.filter(function(it){ return it.zone === "jimi"; }));
-  }else if(curCat === "az3" || curCat === "bakeshi"){
+  }else if(curCat === "bakeshi"){
     push(ITEMS.filter(function(it){ return it.zone === curCat && it.cat === curSub; }));
   }else{
     push(ITEMS.filter(function(it){ return it.cat === curCat; }));
   }
-  empty.innerHTML = curCat === "az3" ? "超临界AZ3专区：暂时没有海报，敬请期待"
-    : (curCat === "bakeshi" ? "巴克什专区：暂时没有海报，敬请期待"
-    : (curCat === "jimi" ? "机密陪玩专区：暂时没有海报，敬请期待" : "该分类下暂时没有海报"));
+  empty.innerHTML = curCat === "bakeshi" ? "巴克什专区：暂时没有海报，敬请期待"
+    : (curCat === "jimi" ? "机密陪玩专区：暂时没有海报，敬请期待" : "该分类下暂时没有海报");
   empty.style.display = curList.length ? "none" : "block";
   regLazy(grid);
 }
